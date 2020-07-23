@@ -4,6 +4,7 @@ import 'package:flutter_app/gridview.dart';
 import 'package:flutter_app/random.dart';
 import 'package:flutter_app/tabhome.dart';
 import 'package:flutter_app/test.dart';
+import 'package:flutter_app/text.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 
 void main() => runApp(new MyApp());
@@ -31,7 +32,7 @@ class MainPage extends StatefulWidget{
 
 class MainPageState extends State<MainPage>{
 
-  List stringList = ['轮播图', 'ListView', 'GridView', '底部导航栏'];
+  List stringList = ['Text', '轮播图', 'ListView', 'GridView', '底部导航栏'];
   
   @override
   Widget build(BuildContext context) {
@@ -64,7 +65,13 @@ class MainPageState extends State<MainPage>{
       ),
       child: new InkWell(
         onTap: (){
-          if(title == '轮播图'){
+          if(title == 'Text') {
+            Navigator.of(context).push(
+              new MaterialPageRoute(
+                builder: (context) => new MyText(),
+              ),
+            );
+          } else if(title == '轮播图'){
             Navigator.of(context).push(
               new MaterialPageRoute(
                 builder: (context) => new TestPage(title: 'Banner'),
