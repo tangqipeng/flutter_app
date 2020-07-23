@@ -142,7 +142,7 @@ class GridViewPageState extends State<GridViewPage> {
             ListTile(
               title: Center(child: Text('GridView'),),
               onTap: (){
-                if(mode == 1){
+                if(mode == 1 && _textControl.text != null && _textControl.text.length > 0){
                   mode = 0;
                   _getImageList(_textControl.text, '0', '50');
                 }
@@ -156,7 +156,7 @@ class GridViewPageState extends State<GridViewPage> {
             ListTile(
               title: Center(child: Text('瀑布流'),),
               onTap: (){
-                if(mode == 0){
+                if(mode == 0 && _textControl.text != null && _textControl.text.length > 0){
                   mode = 1;
                   _getImageList(_textControl.text, '0', '50');
                 }

@@ -20,4 +20,4 @@ flutter pub run build_runner build
 
 ## flutter下各种控件例子
 
-## Gridview控件中有详细的TextField组建，实现输入文字显示清空按钮，没有文字隐藏清空按钮
+## Gridview控件中有详细的TextField组建，实现输入文字显示清空按钮，没有文字隐藏清空按钮，这里不管是主动点击清空按钮还是一个一个删除字符都能有效果
