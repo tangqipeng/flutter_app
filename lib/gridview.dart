@@ -27,10 +27,17 @@ class GridViewPageState extends State<GridViewPage> {
 
   double itemWidth = 20;
 
+  bool isGone = true;
+
   @override
   void initState() {
     super.initState();
-    _getImageList('北京', '0', '50');
+    _getImageList(_textControl.text, '0', '50');
+    if(_textControl.text != null){
+      isGone = false;
+    } else {
+      isGone = true;
+    }
   }
 
   @override
@@ -38,18 +45,49 @@ class GridViewPageState extends State<GridViewPage> {
     itemWidth = ((MediaQuery.of(context).size.width - 2.0) / 2);
     return new Scaffold(
       appBar: new AppBar(
-        title: new TextField(
-          keyboardType: TextInputType.text,
-          autofocus: false,
-          decoration: InputDecoration(
-            hintText: "请输入地址",
-            border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(30),
-                borderSide: BorderSide.none),
-          ),
-          onChanged: (value) {},
-          controller: _textControl,
-          focusNode: _focusNode,
+        titleSpacing: 1,
+        title: Stack(
+          alignment: const Alignment(1.0, 0.0),
+          children: <Widget>[
+            new Container(
+//              color: Colors.black12,
+              child: new TextField(
+                keyboardType: TextInputType.text,
+                autofocus: false,
+                decoration: InputDecoration(
+                  hintText: "请输入地址",
+                  contentPadding: EdgeInsets.only(left: 10, right: 10),
+                  labelStyle: TextStyle(
+                    backgroundColor: Colors.grey,
+                  ),
+//                  border: OutlineInputBorder(
+//                      borderRadius: BorderRadius.circular(30),
+//                      borderSide: BorderSide.none,
+//                  ),
+                ),
+                onChanged: (value) {
+                  print(value);
+                  if(value != null && value.length > 0){
+                    isGone = false;
+                  }else{
+                    isGone = true;
+                  }
+                  setState(() {
+
+                  });
+                },
+                controller: _textControl,
+                focusNode: _focusNode,
+              ),
+            ),
+            new Offstage(
+              offstage: isGone,
+              child: new IconButton(
+                icon: Icon(Icons.clear),
+                onPressed: _pressClear,
+              ),
+            ),
+          ],
         ),
         actions: <Widget>[
           new Padding(
@@ -64,6 +102,14 @@ class GridViewPageState extends State<GridViewPage> {
       ),
       body: _getBodyCntainer()
     );
+  }
+
+  void _pressClear(){
+    _textControl.clear();
+    isGone = true;
+    setState(() {
+
+    });
   }
 
   void _confirmPressed() {
