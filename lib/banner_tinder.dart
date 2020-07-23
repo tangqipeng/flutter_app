@@ -7,11 +7,15 @@ import 'detail.dart';
 
 final List<String> imageList = [
   'images/meinv-1.jpg',
+  'images/meinv-2.jpg',
+  'images/meinv-3.jpg',
   'images/shanshui-4.jpg',
   'images/shanshui-5.jpg',
 ];
 
 final List<String> descriptions = [
+  '社会我宝姐，人美路子野',
+  '社会我宝姐，人美路子野',
   '社会我宝姐，人美路子野',
   '莲，出淤泥而不染',
   '周五快到了，准备追更新',
