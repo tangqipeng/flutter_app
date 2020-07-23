@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'dart:io';
+import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:json_annotation/json_annotation.dart';
 part 'gridview.g.dart';
 
@@ -21,15 +23,19 @@ class GridViewPageState extends State<GridViewPage> {
 
   List<ImageBean> imageList = [];
 
+  int mode = 1;
+
+  double itemWidth = 20;
+
   @override
   void initState() {
     super.initState();
-    print(imageList.length);
     _getImageList('北京', '0', '50');
   }
 
   @override
   Widget build(BuildContext context) {
+    itemWidth = ((MediaQuery.of(context).size.width - 2.0) / 2);
     return new Scaffold(
       appBar: new AppBar(
         title: new TextField(
@@ -46,10 +52,81 @@ class GridViewPageState extends State<GridViewPage> {
           focusNode: _focusNode,
         ),
         actions: <Widget>[
-          new IconButton(icon: new Icon(Icons.list), onPressed: _listPressed)
+          new Padding(
+            padding: EdgeInsets.all(10),
+            child: new RaisedButton(
+              onPressed: _confirmPressed,
+              child: new Text('确定'),
+            ),
+          ),
+          new IconButton(icon: new Icon(Icons.list), onPressed: _listPressed),
         ],
       ),
-      body: GridView.builder(
+      body: _getBodyCntainer()
+    );
+  }
+
+  void _confirmPressed() {
+    _getImageList(_textControl.text, '0', '50');
+  }
+
+  void _listPressed() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context){
+        return SimpleDialog(
+          title: Center(
+            child: Text(
+              '模式切换',
+              style: TextStyle(
+                fontSize: 20,
+                fontStyle: FontStyle.normal,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+          titlePadding: EdgeInsets.all(10),
+          elevation: 5,
+          contentPadding: EdgeInsets.fromLTRB(0, 0, 0, 0),
+          children: <Widget>[
+            Container(
+              height: 1,
+              color: Colors.black38,
+            ),
+            ListTile(
+              title: Center(child: Text('GridView'),),
+              onTap: (){
+                if(mode == 1){
+                  mode = 0;
+                  _getImageList(_textControl.text, '0', '50');
+                }
+                Navigator.pop(context);
+              },
+            ),
+            Container(
+              height: 1,
+              color: Colors.black38,
+            ),
+            ListTile(
+              title: Center(child: Text('瀑布流'),),
+              onTap: (){
+                if(mode == 0){
+                  mode = 1;
+                  _getImageList(_textControl.text, '0', '50');
+                }
+                Navigator.pop(context);
+              },
+            ),
+          ],
+        );
+      }
+    );
+  }
+
+  Widget _getBodyCntainer(){
+    if(mode == 0){
+      return GridView.builder(
+          padding: EdgeInsets.only(top: 5),
           itemCount: imageList.length,
           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 3,
@@ -58,27 +135,30 @@ class GridViewPageState extends State<GridViewPage> {
             childAspectRatio: 1.0,
           ),
           itemBuilder: (BuildContext context, int index) {
-            return getItemContainer(imageList[index]);
-          }),
-    );
+            return getGridItemContainer(imageList[index]);
+          });
+    }else{
+      return StaggeredGridView.builder(
+          padding: EdgeInsets.only(top: 5),
+          itemCount: imageList.length,
+          gridDelegate: SliverStaggeredGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 4,
+              mainAxisSpacing: 4,
+              crossAxisSpacing: 4,
+              staggeredTileBuilder: (int index) => new StaggeredTile.fit(2),),
+          itemBuilder: (BuildContext context, int index){
+          return getStaggGridItemContainer(imageList[index]);
+        },
+      );
+    }
   }
 
-  void _listPressed() {
-    _getImageList(_textControl.text, '0', '50');
-  }
-
-  Widget getItemContainer(ImageBean item) {
+  Widget getGridItemContainer(ImageBean item) {
     try{
       return Stack(
         alignment: const Alignment(0.0, 0.9),
         //      alignment: Alignment.bottomCenter,
         children: <Widget>[
-          //        Image.asset(
-          //          'images/meinv-1.jpg',
-          //          width: (MediaQuery.of(context).size.width - (2.0 * 2)) / 3,
-          //          height: (MediaQuery.of(context).size.width - (2.0 * 2)) / 3,
-          //          fit: BoxFit.cover,
-          //        ),
           new Image.network(
             item.thumb,
             width: (MediaQuery
@@ -98,6 +178,37 @@ class GridViewPageState extends State<GridViewPage> {
               fontWeight: FontWeight.bold,
               color: Colors.white,
             ),
+            maxLines: 3,
+          ),
+        ],
+      );
+    }catch(e){
+      return Stack();
+    }
+  }
+
+  Widget getStaggGridItemContainer(ImageBean item) {
+    try{
+      double hight = double.parse(item.height);
+      double width = double.parse(item.width);
+      return Stack(
+        alignment: const Alignment(0.0, 0.9),
+        //      alignment: Alignment.bottomCenter,
+        children: <Widget>[
+          new Image.network(
+            item.thumb,
+            width: itemWidth,
+            height: (itemWidth * hight / width),
+            fit: BoxFit.fill,
+          ),
+          Text(
+            item.title,
+            style: TextStyle(
+              fontSize: 12.0,
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
+            ),
+            maxLines: 3,
           ),
         ],
       );

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:english_words/english_words.dart';
-import 'package:flutter_app/test.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 class RandomWords extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
@@ -103,10 +103,6 @@ class RandomWordsState extends State<RandomWords> {
   }
 
   void _jumpOther(String param) {
-    Navigator.of(context).push(
-      new MaterialPageRoute(
-        builder: (context) => new TestPage(title: param),
-      ),
-    );
+    Fluttertoast.showToast(msg: param);
   }
 }

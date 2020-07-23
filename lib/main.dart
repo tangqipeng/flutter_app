@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_app/banner.dart';
 import 'package:flutter_app/gridview.dart';
+import 'package:flutter_app/random.dart';
 import 'package:flutter_app/tabhome.dart';
+import 'package:flutter_app/test.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 
 void main() => runApp(new MyApp());
@@ -67,7 +70,25 @@ class MainPageState extends State<MainPage>{
             if(title == '轮播图'){
               Navigator.of(context).push(
                 new MaterialPageRoute(
+                  builder: (context) => new TestPage(title: 'Banner'),
+                ),
+              );
+            } else if(title == 'ListView'){
+              Navigator.of(context).push(
+                new MaterialPageRoute(
+                  builder: (context) => new RandomWords(),
+                ),
+              );
+            } else if(title == 'GridView'){
+              Navigator.of(context).push(
+                new MaterialPageRoute(
                   builder: (context) => new GridViewPage(),
+                ),
+              );
+            } else if(title == '底部导航栏'){
+              Navigator.of(context).push(
+                new MaterialPageRoute(
+                  builder: (context) => new HomePage(),
                 ),
               );
             }
