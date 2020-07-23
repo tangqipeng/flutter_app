@@ -62,43 +62,42 @@ class MainPageState extends State<MainPage>{
       borderRadius: new BorderRadius.all(
         new Radius.circular(10.0),
       ),
-
-      child: new Container(
-        alignment: Alignment.center,
-        child: new InkWell(
-          onTap: (){
-            if(title == '轮播图'){
-              Navigator.of(context).push(
-                new MaterialPageRoute(
-                  builder: (context) => new TestPage(title: 'Banner'),
-                ),
-              );
-            } else if(title == 'ListView'){
-              Navigator.of(context).push(
-                new MaterialPageRoute(
-                  builder: (context) => new RandomWords(),
-                ),
-              );
-            } else if(title == 'GridView'){
-              Navigator.of(context).push(
-                new MaterialPageRoute(
-                  builder: (context) => new GridViewPage(),
-                ),
-              );
-            } else if(title == '底部导航栏'){
-              Navigator.of(context).push(
-                new MaterialPageRoute(
-                  builder: (context) => new HomePage(),
-                ),
-              );
-            }
-          },
+      child: new InkWell(
+        onTap: (){
+          if(title == '轮播图'){
+            Navigator.of(context).push(
+              new MaterialPageRoute(
+                builder: (context) => new TestPage(title: 'Banner'),
+              ),
+            );
+          } else if(title == 'ListView'){
+            Navigator.of(context).push(
+              new MaterialPageRoute(
+                builder: (context) => new RandomWords(),
+              ),
+            );
+          } else if(title == 'GridView'){
+            Navigator.of(context).push(
+              new MaterialPageRoute(
+                builder: (context) => new GridViewPage(),
+              ),
+            );
+          } else if(title == '底部导航栏'){
+            Navigator.of(context).push(
+              new MaterialPageRoute(
+                builder: (context) => new HomePage(),
+              ),
+            );
+          }
+        },
+        child: new Container(
+          alignment: Alignment.center,
           child: new Text(
-            title,
-            textAlign: TextAlign.center,
-            style: TextStyle(
+              title,
+              textAlign: TextAlign.center,
+              style: TextStyle(
               inherit: true,
-//              backgroundColor: Colors.white,
+          //              backgroundColor: Colors.white,
               fontSize: 32,
               fontWeight: FontWeight.w800,
               color: Colors.amber,

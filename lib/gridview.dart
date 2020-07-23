@@ -23,7 +23,7 @@ class GridViewPageState extends State<GridViewPage> {
 
   List<ImageBean> imageList = [];
 
-  int mode = 1;
+  int mode = 0;
 
   double itemWidth = 20;
 
@@ -179,6 +179,7 @@ class GridViewPageState extends State<GridViewPage> {
               color: Colors.white,
             ),
             maxLines: 3,
+            overflow: TextOverflow.ellipsis,
           ),
         ],
       );
@@ -209,6 +210,7 @@ class GridViewPageState extends State<GridViewPage> {
               color: Colors.white,
             ),
             maxLines: 3,
+            overflow: TextOverflow.ellipsis,
           ),
         ],
       );
