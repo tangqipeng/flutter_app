@@ -3,6 +3,7 @@ import 'dart:io';
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:json_annotation/json_annotation.dart';
 part 'gridview.g.dart';
 
@@ -14,12 +15,12 @@ class GridViewPage extends StatefulWidget {
 }
 
 
-class GridViewPageState extends State<GridViewPage> {
+class GridViewPageState extends State<GridViewPage> with WidgetsBindingObserver{
   final _textControl = TextEditingController(
     text: "北京",
   );
 
-  final _focusNode = new FocusNode();
+  final FocusNode _focusNode = new FocusNode();
 
   List<ImageBean> imageList = [];
 
@@ -31,13 +32,14 @@ class GridViewPageState extends State<GridViewPage> {
 
   @override
   void initState() {
-    super.initState();
+//    WidgetsBinding.instance.addObserver(this);
     _getImageList(_textControl.text, '0', '50');
     if(_textControl.text != null){
       isGone = false;
     } else {
       isGone = true;
     }
+    super.initState();
   }
 
   @override
@@ -113,6 +115,7 @@ class GridViewPageState extends State<GridViewPage> {
   }
 
   void _confirmPressed() {
+    FocusScope.of(context).requestFocus(FocusNode());
     _getImageList(_textControl.text, '0', '50');
   }
 
@@ -145,6 +148,8 @@ class GridViewPageState extends State<GridViewPage> {
                 if(mode == 1 && _textControl.text != null && _textControl.text.length > 0){
                   mode = 0;
                   _getImageList(_textControl.text, '0', '50');
+                }else {
+                  Fluttertoast.showToast(msg: (_textControl.text != null && _textControl.text.length > 0) ? "目前已是Gridview模式":"TextField没有内容");
                 }
                 Navigator.pop(context);
               },
@@ -159,6 +164,8 @@ class GridViewPageState extends State<GridViewPage> {
                 if(mode == 0 && _textControl.text != null && _textControl.text.length > 0){
                   mode = 1;
                   _getImageList(_textControl.text, '0', '50');
+                } else {
+                  Fluttertoast.showToast(msg: (_textControl.text != null && _textControl.text.length > 0) ? "目前已是瀑布流模式":"TextField没有内容");
                 }
                 Navigator.pop(context);
               },
@@ -300,6 +307,26 @@ class GridViewPageState extends State<GridViewPage> {
       imageList = result;
 //      print("imageList is "+imageList.toString());
     });
+  }
+
+//  @override
+//  void didChangeMetrics() {
+//    super.didChangeMetrics();
+//    WidgetsBinding.instance.addPostFrameCallback((_) {
+//      setState(() {
+//        if(MediaQuery.of(context).viewInsets.bottom > 0){
+//          Fluttertoast.showToast(msg: "键盘弹出");
+//        }else{
+//          Fluttertoast.showToast(msg: "键盘隐藏");
+//        }
+//      });
+//    });
+//  }
+
+  @override
+  void dispose() {
+//    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
   }
 
 }
