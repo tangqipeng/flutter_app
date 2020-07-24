@@ -4,13 +4,14 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_app/entity/image_entity.dart';
+import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
-class PullrefreshPage extends StatefulWidget{
+class PullDownPage extends StatefulWidget{
 
   @override
   State createState() {
-    return new PullrefreshPageState();
+    return new PullDownPageState();
   }
 }
 
@@ -23,10 +24,11 @@ enum LoadingStatus{
   STATUS_COMPLETED
 }
 
-class PullrefreshPageState extends State<PullrefreshPage>{
+class PullDownPageState extends State<PullDownPage>{
 
   List<ImageBean> imageList = [];
 
+  double itemWidth = 20;
   ScrollController _controller;
 
   int imageTotal = 0;
@@ -53,6 +55,7 @@ class PullrefreshPageState extends State<PullrefreshPage>{
 
   @override
   Widget build(BuildContext context) {
+    itemWidth = ((MediaQuery.of(context).size.width - 2.0) / 2);
     return new Scaffold(
       appBar: new AppBar(
         title: Text('下拉刷新'),
@@ -63,39 +66,34 @@ class PullrefreshPageState extends State<PullrefreshPage>{
 
   Widget getBody(){
     return RefreshIndicator(
-        child: GridView.builder(
-            padding: EdgeInsets.only(top: 5),
-            itemCount: imageList.length,
-            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 3,
-              mainAxisSpacing: 2.0,
-              crossAxisSpacing: 2.0,
-              childAspectRatio: 1.0,
-            ),
-            controller: _controller,
-            itemBuilder: (BuildContext context, int index) {
-              return getGridItemContainer(imageList[index]);
-            }),
+        child: StaggeredGridView.countBuilder(
+          controller: _controller,
+          padding: EdgeInsets.only(top: 5),
+          itemCount: imageList.length,
+          crossAxisCount: 4,
+          mainAxisSpacing: 4,
+          crossAxisSpacing: 4,
+          staggeredTileBuilder: (int index) => new StaggeredTile.fit(2),
+          itemBuilder: (BuildContext context, int index){
+            return getStaggGridItemContainer(imageList[index]);
+          },
+        ),
         onRefresh: _refresh);
   }
 
-  Widget getGridItemContainer(ImageBean item) {
+  Widget getStaggGridItemContainer(ImageBean item) {
     try{
+      double hight = double.parse(item.height);
+      double width = double.parse(item.width);
       return Stack(
         alignment: const Alignment(0.0, 0.9),
         //      alignment: Alignment.bottomCenter,
         children: <Widget>[
           new Image.network(
             item.thumb,
-            width: (MediaQuery
-                .of(context)
-                .size
-                .width - (2.0 * 2)) / 3,
-            height: (MediaQuery
-                .of(context)
-                .size
-                .width - (2.0 * 2)) / 3,
-            fit: BoxFit.cover,
+            width: itemWidth,
+            height: (itemWidth * hight / width),
+            fit: BoxFit.fill,
           ),
           Text(
             item.title,
@@ -141,7 +139,7 @@ class PullrefreshPageState extends State<PullrefreshPage>{
         ImageResponse imageResponse = ImageResponse.fromJson(data);
 
         imageTotal = imageResponse.total;
-        print('imageTotal is '+ imageTotal.toString());
+        print('total is ${imageResponse.total}');
 
         result = imageResponse.list;
 

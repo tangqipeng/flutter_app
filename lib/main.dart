@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_app/banner/banner.dart';
 import 'package:flutter_app/gridview/gridview.dart';
-import 'package:flutter_app/pullrefresh/pullrefresh.dart';
+import 'package:flutter_app/pullrefresh/pulldownrefresh_gridview.dart';
 import 'package:flutter_app/listview/random.dart';
 import 'package:flutter_app/tab/tabhome.dart';
 import 'package:flutter_app/banner/test.dart';

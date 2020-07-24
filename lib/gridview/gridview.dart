@@ -283,14 +283,14 @@ class GridViewPageState extends State<GridViewPage> with WidgetsBindingObserver{
       var request = await httpClient.getUrl(Uri.parse(url));
       var response = await request.close();
       if (response.statusCode == HttpStatus.ok) {
-        print("response is "+ response.statusCode.toString());
+        print("response is ${response.statusCode}");
         var jsona = await response.transform(utf8.decoder).join();
-        print("json is "+jsona);
+        print("json is ${jsona}");
 
         Map<String, dynamic> data = json.decode(jsona);
         ImageResponse imageResponse = ImageResponse.fromJson(data);
 
-        print('total is '+imageResponse.total.toString());
+        print('total is ${imageResponse.total}');
 
         result = imageResponse.list;
 
