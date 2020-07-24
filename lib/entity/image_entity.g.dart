@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'gridview.dart';
+part of 'image_entity.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator

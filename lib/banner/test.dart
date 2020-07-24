@@ -2,8 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter_swiper/flutter_swiper.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
-import 'banner_tinder.dart';
-import 'gridview.dart';
+import 'banner.dart';
+
+class TestPage extends StatefulWidget {
+  final String title;
+
+  TestPage({this.title});
+
+  @override
+  State<StatefulWidget> createState() {
+    // TODO: implement createState
+    return new TestPageState(title: title);
+  }
+}
 
 final List<String> imageList = [
   'images/meinv-1.jpg',
@@ -21,25 +32,56 @@ final List<String> descriptions = [
   '周五快到了，准备追更新',
 ];
 
-class BannerPage extends StatefulWidget {
-  @override
-  State createState() {
-    return new BannerPageState();
-  }
-}
+class TestPageState extends State<TestPage> {
+  final String title;
 
-class BannerPageState extends State<BannerPage> {
+  SwiperController swiperController;
+
+  TestPageState({this.title});
+
+  @override
+  void initState() {
+    swiperController = new SwiperController();
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    imageList.clear();
+    descriptions.clear();
+    swiperController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
+    // TODO: implement build
     return new Scaffold(
       appBar: new AppBar(
-        title: new Text('BannerShow'),
+        title: new Text(title),
       ),
       body: _buildContainer(),
     );
   }
 
   Widget _buildContainer() {
+    void _onPointerDown(PointerDownEvent event) {
+      print("_onPointerDown：" + event.toString());
+      swiperController.stopAutoplay();
+      Fluttertoast.showToast(msg: "stopAutoplay");
+    }
+
+    void _onPointerMove(PointerMoveEvent event) {
+      print("_onPointerMove：" + event.toString());
+      Fluttertoast.showToast(msg: "_onPointerMove");
+    }
+
+    void _onPointerUp(PointerUpEvent event) {
+      print("_onPointerUp：" + event.toString());
+      Fluttertoast.showToast(msg: "startAutoplay");
+      swiperController.startAutoplay();
+    }
+
     return new Column(
       children: <Widget>[
         Container(
@@ -49,59 +91,62 @@ class BannerPageState extends State<BannerPage> {
           child: _buildSwiper(),
         ),
         Center(
-            child: SizedBox.fromSize(
-              size: Size.fromHeight(180.0),
-              child: Swiper(
-                itemBuilder: (BuildContext context, int index) {
-                  return Padding(
-                    padding: EdgeInsets.symmetric(vertical: 16.0, horizontal: 0.0),
-                    child: GestureDetector(
-                      onTap: () {
-                        Fluttertoast.showToast(msg: descriptions[index]);
-                        Navigator.of(context).push(
-                          new MaterialPageRoute(
-                            builder: (context) => new BannerTINDERPage(),
-                          ),
-                        );
-                      },
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(6.0),
-                        child: Stack(
-                          fit: StackFit.expand,
-                          children: <Widget>[
-                            Image.asset(imageList[index], fit: BoxFit.cover),
-                          ],
-                        ),
+          child: new SizedBox.fromSize(
+            size: new Size.fromHeight(180.0),
+            child: new Swiper(
+              itemBuilder: (context, i) {
+                return new Padding(
+                  padding:
+                  EdgeInsets.symmetric(vertical: 16.0, horizontal: 0.0),
+                  child: Listener(
+                    onPointerDown: _onPointerDown,
+                    onPointerMove: _onPointerMove,
+                    onPointerUp: _onPointerUp,
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(6.0),
+                      child: Stack(
+                        fit: StackFit.expand,
+                        children: <Widget>[
+                          Image.asset(
+                            imageList[i],
+                            fit: BoxFit.cover,
+                          )
+                        ],
                       ),
                     ),
-                  );
-                },
-                itemCount: imageList.length,
-                //选中时的指示器
-                pagination: new SwiperPagination(
-                    builder: DotSwiperPaginationBuilder(
-                      color: Colors.black38,
-                      activeColor: Colors.white,
-                    ),
-                    margin: const EdgeInsets.only(bottom: 22.0)),
-                control: null,
-                duration: 300,
-                scrollDirection: Axis.horizontal,
-                viewportFraction: 0.8,
-                scale: 0.85,
-                autoplay: true,
-                //            onTap: (int index) {
-                //              Fluttertoast.showToast(msg: '点击了第$index个');
-                //              Navigator.of(context).push(
-                //                new MaterialPageRoute(
-                //                  builder: (context) => new BannerTINDERPage(),
-                //                ),
-                //              );
-                //            },
+                  ),
+                );
+              },
+              itemCount: imageList.length,
+              itemWidth: 300.0,
+              layout: SwiperLayout.STACK,
+              pagination: new SwiperPagination(
+                builder: new DotSwiperPaginationBuilder(
+                  color: Colors.black38,
+                  activeColor: Colors.white,
+                ),
+                margin: const EdgeInsets.only(bottom: 22.0),
               ),
-            )),
+              controller: swiperController,
+              control: null,
+              duration: 300,
+              scrollDirection: Axis.horizontal,
+              viewportFraction: 0.8,
+              scale: 0.85,
+              autoplay: true,
+              onTap: (int i) {
+                Fluttertoast.showToast(msg: descriptions[i]);
+                Navigator.of(context).push(
+                  new MaterialPageRoute(
+                    builder: (context) => new BannerPage(),
+                  ),
+                );
+              },
+            ),
+          ),
+        ),
         Center(
-          child: SizedBox.fromSize(
+          child: new SizedBox.fromSize(
             size: Size.fromHeight(180.0),
             child: Swiper(
               itemBuilder: (BuildContext context, int index) {
@@ -127,16 +172,6 @@ class BannerPageState extends State<BannerPage> {
                 );
               },
               itemCount: imageList.length,
-              layout: SwiperLayout.CUSTOM,
-              customLayoutOption:
-              new CustomLayoutOption(startIndex: -1, stateCount: 3)
-                  .addRotate([-45.0 / 180, 0.0, 45.0 / 180]).addTranslate([
-                new Offset(-370.0, -40.0),
-                new Offset(0.0, 0.0),
-                new Offset(370.0, -40.0)
-              ]),
-              itemWidth: 300.0,
-              itemHeight: 180.0,
               //选中时的指示器
               pagination: new SwiperPagination(
                   builder: DotSwiperPaginationBuilder(
@@ -170,20 +205,12 @@ class BannerPageState extends State<BannerPage> {
             color: Colors.black38,
             activeColor: Colors.blueAccent,
           )),
-      control: new SwiperControl(
-        iconPrevious: Icons.arrow_back_ios,
-        iconNext: Icons.arrow_forward_ios,
-      ),
+      control: null,
       duration: 300,
       scrollDirection: Axis.horizontal,
       autoplay: true,
       onTap: (int i) {
         Fluttertoast.showToast(msg: descriptions[i]);
-        Navigator.of(context).push(
-          new MaterialPageRoute(
-            builder: (context) => new GridViewPage(),
-          ),
-        );
       },
     );
   }
@@ -191,7 +218,7 @@ class BannerPageState extends State<BannerPage> {
   Widget _buildItemImage(int index) {
     return Image.asset(
       imageList[index],
-      fit: BoxFit.cover
+      fit: BoxFit.cover,
     );
   }
 }

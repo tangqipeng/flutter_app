@@ -38,6 +38,7 @@ dependencies:
   flutter_staggered_grid_view:
   cached_network_image: ^2.2.0+1
   shimmer: ^1.0.0
+  dynamic_list_view:
 
 dev_dependencies:
   flutter_test:

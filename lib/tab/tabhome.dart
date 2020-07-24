@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_app/banner.dart';
-import 'package:flutter_app/banner_tinder.dart';
-import 'package:flutter_app/gridview.dart';
-import 'package:flutter_app/random.dart';
+import 'package:flutter_app/banner/banner.dart';
+import 'package:flutter_app/banner/banner_tinder.dart';
+import 'package:flutter_app/gridview/gridview.dart';
+import 'package:flutter_app/listview/random.dart';
 
 class HomePage extends StatefulWidget{
 

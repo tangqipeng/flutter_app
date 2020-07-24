@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_swiper/flutter_swiper.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
-import 'custom_route.dart';
-import 'detail.dart';
+import '../custom/custom_route.dart';
+import '../detail.dart';
 
 final List<String> imageList = [
   'images/meinv-1.jpg',
@@ -31,7 +31,7 @@ class BannerTINDERPage extends StatefulWidget {
 class BannerTINDERPageState extends State<BannerTINDERPage>
     with SingleTickerProviderStateMixin {
   int num = 0;
-  SwiperController swiperController = new SwiperController();
+  SwiperController swiperController;
   AnimationController controller;
 
   @override
@@ -53,6 +53,7 @@ class BannerTINDERPageState extends State<BannerTINDERPage>
   @override
   void initState() {
     print('initState');
+    swiperController = new SwiperController();
     controller = new AnimationController(
       vsync: this,
       duration: new Duration(milliseconds: 500),
@@ -258,5 +259,14 @@ class BannerTINDERPageState extends State<BannerTINDERPage>
           break;
       }
     });
+  }
+
+  @override
+  void dispose() {
+    imageList.clear();
+    descriptions.clear();
+    controller.dispose();
+    swiperController.dispose();
+    super.dispose();
   }
 }

@@ -4,8 +4,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:json_annotation/json_annotation.dart';
-part 'gridview.g.dart';
+import '../entity/image_entity.dart';
 
 class GridViewPage extends StatefulWidget {
   @override
@@ -115,6 +114,7 @@ class GridViewPageState extends State<GridViewPage> with WidgetsBindingObserver{
   }
 
   void _confirmPressed() {
+    imageList.clear();
     FocusScope.of(context).requestFocus(FocusNode());
     _getImageList(_textControl.text, '0', '50');
   }
@@ -146,6 +146,7 @@ class GridViewPageState extends State<GridViewPage> with WidgetsBindingObserver{
               title: Center(child: Text('GridView'),),
               onTap: (){
                 if(mode == 1 && _textControl.text != null && _textControl.text.length > 0){
+                  imageList.clear();
                   mode = 0;
                   _getImageList(_textControl.text, '0', '50');
                 }else {
@@ -162,6 +163,7 @@ class GridViewPageState extends State<GridViewPage> with WidgetsBindingObserver{
               title: Center(child: Text('瀑布流'),),
               onTap: (){
                 if(mode == 0 && _textControl.text != null && _textControl.text.length > 0){
+                  imageList.clear();
                   mode = 1;
                   _getImageList(_textControl.text, '0', '50');
                 } else {
@@ -272,7 +274,7 @@ class GridViewPageState extends State<GridViewPage> with WidgetsBindingObserver{
     }
   }
 
-  _getImageList(String q, String sn, String pn) async {
+  void _getImageList(String q, String sn, String pn) async {
     var url = 'http://image.so.com/j?q='+q+'&sn='+sn+'&pn='+pn;
     var httpClient = new HttpClient();
     print("_getImageList");
@@ -280,17 +282,12 @@ class GridViewPageState extends State<GridViewPage> with WidgetsBindingObserver{
     try {
       var request = await httpClient.getUrl(Uri.parse(url));
       var response = await request.close();
-//      print("response is "+ String.fromCharCode(response.statusCode));
-
       if (response.statusCode == HttpStatus.ok) {
         print("response is "+ response.statusCode.toString());
-//        response.redirect(response.headers.value("location"))
         var jsona = await response.transform(utf8.decoder).join();
         print("json is "+jsona);
 
-//        ImageResponse imageResponse = jsonDecode(json, ImageResponse.class);
         Map<String, dynamic> data = json.decode(jsona);
-//        print(data);
         ImageResponse imageResponse = ImageResponse.fromJson(data);
 
         print('total is '+imageResponse.total.toString());
@@ -328,38 +325,5 @@ class GridViewPageState extends State<GridViewPage> with WidgetsBindingObserver{
 //    WidgetsBinding.instance.removeObserver(this);
     super.dispose();
   }
-
-}
-@JsonSerializable()
-class ImageBean extends Object {
-  @JsonKey(name: 'title')
-  String title;
-  @JsonKey(name: 'thumb')
-  String thumb;
-  @JsonKey(name: 'width')
-  String width;
-  @JsonKey(name: 'height')
-  String height;
-
-
-  ImageBean(this.title, this.thumb, this.width, this.height);
-
-  factory ImageBean.fromJson(Map<String, dynamic> json) => _$ImageBeanFromJson(json);
-
-  Map<String, dynamic> toJson() => _$ImageBeanToJson(this);
-
-}
-@JsonSerializable()
-class ImageResponse extends Object {
-  int total;
-  List<ImageBean> list;
-
-
-  ImageResponse(this.total, this.list);
-
-  factory ImageResponse.fromJson(Map<String, dynamic> json) => _$ImageResponseFromJson(json);
-
-  Map<String, dynamic> toJson() => _$ImageResponseToJson(this);
-
 
 }

@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_app/banner.dart';
-import 'package:flutter_app/gridview.dart';
-import 'package:flutter_app/random.dart';
-import 'package:flutter_app/tabhome.dart';
-import 'package:flutter_app/test.dart';
-import 'package:flutter_app/text.dart';
+import 'package:flutter_app/banner/banner.dart';
+import 'package:flutter_app/gridview/gridview.dart';
+import 'package:flutter_app/pullrefresh/pullrefresh.dart';
+import 'package:flutter_app/listview/random.dart';
+import 'package:flutter_app/tab/tabhome.dart';
+import 'package:flutter_app/banner/test.dart';
+import 'package:flutter_app/text/text.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 
 void main() => runApp(new MyApp());
@@ -32,7 +33,7 @@ class MainPage extends StatefulWidget{
 
 class MainPageState extends State<MainPage>{
 
-  List stringList = ['Text', '轮播图', 'ListView', 'GridView', '底部导航栏'];
+  List stringList = ['Text', '轮播图', 'ListView', 'GridView', '底部导航栏', '下拉刷新'];
   
   @override
   Widget build(BuildContext context) {
@@ -93,6 +94,12 @@ class MainPageState extends State<MainPage>{
             Navigator.of(context).push(
               new MaterialPageRoute(
                 builder: (context) => new HomePage(),
+              ),
+            );
+          } else if(title == '下拉刷新'){
+            Navigator.of(context).push(
+              new MaterialPageRoute(
+                builder: (context) => new PullrefreshPage(),
               ),
             );
           }
