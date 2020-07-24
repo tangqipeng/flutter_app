@@ -4,26 +4,25 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_app/entity/image_entity.dart';
-import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
-class PullUpPage extends StatefulWidget{
+class PullUpGridPage extends StatefulWidget{
 
   @override
   State createState() {
-    return PullUpPageState();
+    return PullUpGridPageState();
   }
 }
 
 /**
- * 这种模式加在gridview后，大小都不好处理，只能让他在下一行的中间那个位置，如果是偶数个就更不好处理了，因此再写另一种
+ * 加载更多的loading一上一下可能也不符合你想要的效果，没事，咱们继续向后看
  */
-class PullUpPageState extends State<PullUpPage> {
+class PullUpGridPageState extends State<PullUpGridPage> {
 
   List<ImageBean> imageList = [];
 
   ScrollController _controller;
-  int mode = 0;
+  bool isVisible = false;
 
   int imageTotal = 0;
 
@@ -34,13 +33,19 @@ class PullUpPageState extends State<PullUpPage> {
   void initState() {
     super.initState();
     _controller = new ScrollController();
-    _getImageList("海南", pageNum, pageCount);
+    _getImageList(pageNum, pageCount);
     _controller.addListener(() {
       if (_controller.position.pixels == _controller.position.maxScrollExtent){
         print(_controller.position.maxScrollExtent);
         if(imageList.length < imageTotal) {
+          setState(() {
+            isVisible = true;
+          });
           _getMoreData();
         } else {
+          setState(() {
+            isVisible = false;
+          });
           Fluttertoast.showToast(msg: "已加载完毕");
         }
       }
@@ -54,49 +59,32 @@ class PullUpPageState extends State<PullUpPage> {
         title: Text("上拉动画"),
       ),
       body: getBody(),
+      bottomSheet: _loadingView(),
     );
   }
 
-  int getItemCount(){
-    int count = imageList.length;
-    if(imageList.length < imageTotal){
-      if (imageList.length % 3 == 0){
-        count = imageList.length+2;
-      } else if (imageList.length % 3 == 1){
-        count = imageList.length+4;
-      } else if (imageList.length % 3 == 2){
-        count = imageList.length+3;
-      }
-    }
-    return count;
-  }
-
   Widget getBody(){
-    int itemCount = getItemCount();
     print("imageList.length is ${imageList.length}");
-    print("count is ${itemCount}");
     return RefreshIndicator(
-        child: createGridview(itemCount),
-        onRefresh: _refresh,
+      child: createGridview(imageList.length),
+      onRefresh: _refresh,
     );
   }
 
   Widget createGridview(int count){
-    if (mode == 0){
-      return GridView.builder(
-          padding: EdgeInsets.only(top: 5),
-          itemCount:count,
-          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 3,
-            mainAxisSpacing: 2.0,
-            crossAxisSpacing: 2.0,
-            childAspectRatio: 1.0,
-          ),
-          controller: _controller,
-          itemBuilder: (BuildContext context, int index) {
-            return loadingGridview(count, index);
-          });
-    }
+    return GridView.builder(
+        padding: EdgeInsets.only(top: 5, bottom: 50),
+        itemCount:count,
+        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 3,
+          mainAxisSpacing: 2.0,
+          crossAxisSpacing: 2.0,
+          childAspectRatio: 1.0,
+        ),
+        controller: _controller,
+        itemBuilder: (BuildContext context, int index) {
+          return getGridItemContainer(imageList[index]);
+        });
   }
 
   Widget getGridItemContainer(ImageBean item) {
@@ -133,43 +121,72 @@ class PullUpPageState extends State<PullUpPage> {
     }
   }
 
+  /**
+   * 说明一下，这里CircularProgressIndicator有些大，简单的布局不能见小它，因此增加了几重
+   */
   Widget _loadingView() {
-    return Container(
-      width: MediaQuery.of(context).size.width,
-      height: 50,
-      child: Center(
+    return Visibility(
+      visible: isVisible,
+      child: Container(
+        width: MediaQuery.of(context).size.width,
+//        color: Colors.black12,
+        height: 50,
         child: Row(
-          children: <Widget>[
-            Visibility(
-              visible: true,
-              child: CircularProgressIndicator(
-                strokeWidth: 2.0,
-              ),
-            ),
-            Text('正在加载...',),
-          ],
-          crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: <Widget>[
+            SizedBox(
+              width: 30,
+              height: 30,
+              child: CircularProgressIndicator(),
+            ),
+            Container(
+              margin: EdgeInsets.only(left: 10),
+              child: Text('正在加载...'),
+            ),
+          ],
         ),
       ),
     );
+//    return Container(
+//      width: MediaQuery.of(context).size.width,
+//      height: 50,
+//      child: Row(
+//        children: <Widget>[
+//          Visibility(
+//            visible: true,
+//            child: CircularProgressIndicator(
+//              strokeWidth: 2.0,
+//            ),
+//          ),
+//          Text(
+//            '正在加载...',
+//          ),
+//        ],
+//        crossAxisAlignment: CrossAxisAlignment.center,
+//        mainAxisAlignment: MainAxisAlignment.center,
+//      ),
+//    );
   }
 
   Future<void> _refresh() async{
     imageList.clear();
     pageNum = 0;
-    _getImageList("海南", pageNum, pageCount);
+    _getImageList(pageNum, pageCount);
     return null;
   }
 
   Future<void> _getMoreData() async{
     pageNum ++;
-    _getImageList("海南", pageNum, pageCount);
+//    Future.delayed(Duration(seconds: 2), () {
+//      _getImageList(pageNum, pageCount);
+//    });
+    _getImageList(pageNum, pageCount);
     return null;
   }
 
-  void _getImageList(String q, int sn, int pn) async {
-    var url = 'http://image.so.com/j?q='+q+'&sn='+sn.toString()+'&pn='+pn.toString();
+  void _getImageList(int sn, int pn) async {
+    var url = 'http://image.so.com/j?q=武汉&sn='+sn.toString()+'&pn='+pn.toString();
     print(url);
     Dio dio = new Dio();
     print("_getImageList");
@@ -193,19 +210,10 @@ class PullUpPageState extends State<PullUpPage> {
     }
 
     setState(() {
+      isVisible = false;
       imageList.addAll(result);
 //      print("imageList is "+imageList.toString());
     });
-  }
-
-  Widget loadingGridview(int count, int index){
-    if (index < imageList.length){
-      return getGridItemContainer(imageList[index]);
-    } else if(index >= imageList.length && index < count -1){
-      return Container();
-    } else {
-      return _loadingView();
-    }
   }
 
   @override

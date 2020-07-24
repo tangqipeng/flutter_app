@@ -40,7 +40,7 @@ class PullDownPageState extends State<PullDownPage>{
   void initState() {
     super.initState();
     _controller = new ScrollController();
-    _getImageList("海南", pageNum, pageCount);
+    _getImageList(pageNum, pageCount);
     _controller.addListener(() {
       if (_controller.position.pixels == _controller.position.maxScrollExtent){
         print(_controller.position.maxScrollExtent);
@@ -115,18 +115,18 @@ class PullDownPageState extends State<PullDownPage>{
   Future<void> _refresh() async{
     imageList.clear();
     pageNum = 0;
-    _getImageList("海南", pageNum, pageCount);
+    _getImageList(pageNum, pageCount);
     return null;
   }
 
   Future<void> _getMoreData() async{
     pageNum ++;
-    _getImageList("海南", pageNum, pageCount);
+    _getImageList(pageNum, pageCount);
     return null;
   }
 
-  void _getImageList(String q, int sn, int pn) async {
-    var url = 'http://image.so.com/j?q='+q+'&sn='+sn.toString()+'&pn='+pn.toString();
+  void _getImageList(int sn, int pn) async {
+    var url = 'http://image.so.com/j?q=长沙&sn='+sn.toString()+'&pn='+pn.toString();
     print(url);
     Dio dio = new Dio();
     print("_getImageList");

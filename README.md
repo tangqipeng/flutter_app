@@ -24,7 +24,6 @@ flutter pub run build_runner build
 
 ## Gridview控件中有详细的TextField组建，实现输入文字显示清空按钮，没有文字隐藏清空按钮，这里不管是主动点击清空按钮还是一个一个删除字符都能有效果
 
-
 ## 下拉刷新采用原生的RefreshIndicator，加载更多采用的是无痕的，到了最后自动加载，（网络越好，效果越好），会实现多种效果
 
 ## 原生tab栏，以及自定义的tab栏

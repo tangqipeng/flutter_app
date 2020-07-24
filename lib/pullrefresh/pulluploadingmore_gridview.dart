@@ -4,25 +4,27 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_app/entity/image_entity.dart';
-import 'package:flutter_app/pullrefresh/pulldownrefresh_staggergridview.dart';
-import 'package:flutter_app/pullrefresh/pullup_loading_gridview.dart';
-import 'package:flutter_app/pullrefresh/pulluploadingmore_gridview.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
-class PullrefreshPage extends StatefulWidget{
+class PullUpPage extends StatefulWidget{
 
   @override
   State createState() {
-    return new PullrefreshPageState();
+    return PullUpPageState();
   }
 }
 
-
-class PullrefreshPageState extends State<PullrefreshPage>{
+/**
+ * 这种模式加在gridview后，大小都不好处理，只能让他在下一行的中间那个位置，如果是偶数个就更不好处理了，因此再写另一种
+ * 这种模式主要是在Listview中好处理，但在gridview中有些麻烦
+ * 虽然处理的不好，但是还是留下来
+ */
+class PullUpPageState extends State<PullUpPage> {
 
   List<ImageBean> imageList = [];
 
   ScrollController _controller;
+  int mode = 0;
 
   int imageTotal = 0;
 
@@ -48,41 +50,60 @@ class PullrefreshPageState extends State<PullrefreshPage>{
 
   @override
   Widget build(BuildContext context) {
-    return new Scaffold(
-      appBar: new AppBar(
-        title: Text('下拉刷新'),
-        actions: <Widget>[
-//          new IconButton(icon: new Icon(Icons.list), onPressed: _pushSaved)
-          showPop(),
-        ],
+    return Scaffold(
+      appBar: AppBar(
+        title: Text("上拉动画"),
       ),
       body: getBody(),
     );
   }
 
+  int getItemCount(){
+    int count = imageList.length;
+    if(imageList.length < imageTotal){
+      if (imageList.length % 3 == 0){
+        count = imageList.length+2;
+      } else if (imageList.length % 3 == 1){
+        count = imageList.length+4;
+      } else if (imageList.length % 3 == 2){
+        count = imageList.length+3;
+      }
+    }
+    return count;
+  }
+
   Widget getBody(){
+    int itemCount = getItemCount();
+    print("imageList.length is ${imageList.length}");
+    print("count is ${itemCount}");
     return RefreshIndicator(
-        child: GridView.builder(
-            padding: EdgeInsets.only(top: 5),
-            itemCount: imageList.length,
-            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 3,
-              mainAxisSpacing: 2.0,
-              crossAxisSpacing: 2.0,
-              childAspectRatio: 1.0,
-            ),
-            controller: _controller,
-            itemBuilder: (BuildContext context, int index) {
-              return getGridItemContainer(imageList[index]);
-            }),
-        onRefresh: _refresh);
+        child: createGridview(itemCount),
+        onRefresh: _refresh,
+    );
+  }
+
+  Widget createGridview(int count){
+    if (mode == 0){
+      return GridView.builder(
+          padding: EdgeInsets.only(top: 5),
+          itemCount:count,
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 3,
+            mainAxisSpacing: 2.0,
+            crossAxisSpacing: 2.0,
+            childAspectRatio: 1.0,
+          ),
+          controller: _controller,
+          itemBuilder: (BuildContext context, int index) {
+            return loadingGridview(count, index);
+          });
+    }
   }
 
   Widget getGridItemContainer(ImageBean item) {
     try{
       return Stack(
         alignment: const Alignment(0.0, 0.9),
-        //      alignment: Alignment.bottomCenter,
         children: <Widget>[
           new Image.network(
             item.thumb,
@@ -113,6 +134,28 @@ class PullrefreshPageState extends State<PullrefreshPage>{
     }
   }
 
+  Widget _loadingView() {
+    return Container(
+      width: MediaQuery.of(context).size.width,
+      height: 50,
+      child: Center(
+        child: Row(
+          children: <Widget>[
+            Visibility(
+              visible: true,
+              child: CircularProgressIndicator(
+                strokeWidth: 2.0,
+              ),
+            ),
+            Text('正在加载...',),
+          ],
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
+        ),
+      ),
+    );
+  }
+
   Future<void> _refresh() async{
     imageList.clear();
     pageNum = 0;
@@ -127,7 +170,7 @@ class PullrefreshPageState extends State<PullrefreshPage>{
   }
 
   void _getImageList(int sn, int pn) async {
-    var url = 'http://image.so.com/j?q=海南&sn='+sn.toString()+'&pn='+pn.toString();
+    var url = 'http://image.so.com/j?q=厦门&sn='+sn.toString()+'&pn='+pn.toString();
     print(url);
     Dio dio = new Dio();
     print("_getImageList");
@@ -154,51 +197,16 @@ class PullrefreshPageState extends State<PullrefreshPage>{
       imageList.addAll(result);
 //      print("imageList is "+imageList.toString());
     });
-
   }
 
-
-  Widget showPop(){
-    return PopupMenuButton(
-      offset: Offset(0, 60),
-      initialValue: "",
-      padding: EdgeInsets.all(0.0),
-      itemBuilder: (BuildContext context){
-        return <PopupMenuItem<String>>[
-          PopupMenuItem(child: Text("pulldownstagg"),value: "pulldown",),
-          PopupMenuItem(child: Container(height: 1,color: Colors.grey,padding: EdgeInsets.all(0.0),margin: EdgeInsets.all(0.0),), height: 1,),
-          PopupMenuItem(child: Text("PullUpPage"),value: "pullupgrid1",),
-          PopupMenuItem(child: Container(height: 1,color: Colors.grey,padding: EdgeInsets.all(0.0),margin: EdgeInsets.all(0.0),), height: 1,),
-          PopupMenuItem(child: Text("PullUpGridPage"),value: "pullupgrid2",),
-        ];
-      },
-      onSelected: (String value){
-        switch(value){
-          case "pulldown":
-            Navigator.of(context).push(
-              new MaterialPageRoute(
-                builder: (context) => new PullDownPage(),
-              ),
-            );
-            break;
-          case "pullupgrid1":
-            Navigator.of(context).push(
-              new MaterialPageRoute(
-                builder: (context) => new PullUpPage(),
-              ),
-            );
-            break;
-          case "pullupgrid2":
-            Navigator.of(context).push(
-              new MaterialPageRoute(
-                builder: (context) => new PullUpGridPage(),
-              ),
-            );
-            break;
-        }
-      },
-      icon: Icon(Icons.list),
-    );
+  Widget loadingGridview(int count, int index){
+    if (index < imageList.length){
+      return getGridItemContainer(imageList[index]);
+    } else if(index >= imageList.length && index < count -1){
+      return Container();
+    } else {
+      return _loadingView();
+    }
   }
 
   @override
