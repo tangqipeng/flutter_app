@@ -130,7 +130,7 @@ class PullUpGridPage1State extends State<PullUpGridPage1> {
   }
 
   /**
-   * 说明一下，这里CircularProgressIndicator有些大，简单的布局不能见小它，因此增加了几重
+   * 说明一下，这里CircularProgressIndicator有些大，简单的布局不能缩小，有的时候反而会变形，因此增加了几重
    */
   Widget _loadingView() {
     return Visibility(
