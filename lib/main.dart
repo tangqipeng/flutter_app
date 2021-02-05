@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_app/banner/banner.dart';
 import 'package:flutter_app/gridview/gridview.dart';
 import 'package:flutter_app/pullrefresh/gv_pulldown.dart';
 import 'package:flutter_app/listview/random.dart';

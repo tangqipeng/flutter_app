@@ -184,11 +184,11 @@ class MyTextState extends State<MyText>{
             ),
             Padding(
               padding: EdgeInsets.all(20),
-              child: ShimmerText(),
+              child: shimmerText(),
             ),
             Padding(
               padding: EdgeInsets.all(20),
-              child: ShimmerText1(),
+              child: shimmerText1(),
             ),
           ],
         ),
@@ -196,7 +196,7 @@ class MyTextState extends State<MyText>{
     );
   }
 
-  Widget ShimmerText(){
+  Widget shimmerText(){
     return Container(
       child: Shimmer.fromColors(
         baseColor: Colors.grey,
@@ -211,7 +211,7 @@ class MyTextState extends State<MyText>{
     );
   }
 
-  Widget ShimmerText1(){
+  Widget shimmerText1(){
     return Container(
       child: Shimmer.fromColors(
         baseColor: Colors.white,

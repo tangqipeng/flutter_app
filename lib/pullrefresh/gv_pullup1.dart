@@ -14,11 +14,9 @@ class PullUpPage extends StatefulWidget{
   }
 }
 
-/**
- * 这种模式加在gridview后，大小都不好处理，只能让他在下一行的中间那个位置，如果是偶数个就更不好处理了，因此再写另一种
- * 这种模式主要是在Listview中好处理，但在gridview中有些麻烦
- * 虽然处理的不好，但是还是留下来
- */
+/// 这种模式加在gridview后，大小都不好处理，只能让他在下一行的中间那个位置，如果是偶数个就更不好处理了，因此再写另一种
+/// 这种模式主要是在Listview中好处理，但在gridview中有些麻烦
+/// 虽然处理的不好，但是还是留下来
 class PullUpPageState extends State<PullUpPage> {
 
   List<ImageBean> imageList = [];
@@ -75,7 +73,7 @@ class PullUpPageState extends State<PullUpPage> {
   Widget getBody(){
     int itemCount = getItemCount();
     print("imageList.length is ${imageList.length}");
-    print("count is ${itemCount}");
+    print("count is $itemCount");
     return RefreshIndicator(
         child: createGridview(itemCount),
         onRefresh: _refresh,
@@ -97,6 +95,8 @@ class PullUpPageState extends State<PullUpPage> {
           itemBuilder: (BuildContext context, int index) {
             return loadingGridview(count, index);
           });
+    }else{
+      return null;
     }
   }
 

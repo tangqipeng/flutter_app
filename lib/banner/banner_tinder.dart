@@ -52,6 +52,7 @@ class BannerTINDERPageState extends State<BannerTINDERPage>
 
   @override
   void initState() {
+    super.initState();
     print('initState');
     swiperController = new SwiperController();
     controller = new AnimationController(

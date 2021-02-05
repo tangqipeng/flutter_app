@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class DetailPage extends StatefulWidget {
-  String image;
+  final String image;
 
   DetailPage({this.image});
 

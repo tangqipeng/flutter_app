@@ -72,9 +72,7 @@ class RandomWordsState extends State<RandomWords> {
         });
   }
 
-  /**
-   * 详细解释：将所有收藏的都加入_saved，每一行触发trailing，在其中的变红，不在其中的没有颜色，在其中的再次点击取消收藏，对应onTap
-   */
+  /// 详细解释：将所有收藏的都加入_saved，每一行触发trailing，在其中的变红，不在其中的没有颜色，在其中的再次点击取消收藏，对应onTap
   Widget _buildRow(WordPair pair) {
     final alreadySaved = _saved.contains(pair);
     return new ListTile(

@@ -14,9 +14,7 @@ class PullUpGridPage extends StatefulWidget{
   }
 }
 
-/**
- * 加载更多的loading一上一下可能也不符合你想要的效果，没事，咱们继续向后看
- */
+/// 加载更多的loading一上一下可能也不符合你想要的效果，没事，咱们继续向后看
 class PullUpGridPageState extends State<PullUpGridPage> {
 
   List<ImageBean> imageList = [];
@@ -121,9 +119,7 @@ class PullUpGridPageState extends State<PullUpGridPage> {
     }
   }
 
-  /**
-   * 说明一下，这里CircularProgressIndicator有些大，简单的布局不能见小它，因此增加了几重
-   */
+  /// 说明一下，这里CircularProgressIndicator有些大，简单的布局不能见小它，因此增加了几重
   Widget _loadingView() {
     return Visibility(
       visible: isVisible,

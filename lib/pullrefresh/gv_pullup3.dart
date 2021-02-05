@@ -58,9 +58,7 @@ class PullUpGridPage1State extends State<PullUpGridPage1> {
     return creatContainer();
   }
 
-  /**
-   * 这种布局的好处是能在头部也加一个布局，就是在gridview之前加上一个图片或者其他的布局
-   */
+  /// 这种布局的好处是能在头部也加一个布局，就是在gridview之前加上一个图片或者其他的布局
   Widget creatContainer(){
     return RefreshIndicator(
       child: Scrollbar(
@@ -129,9 +127,7 @@ class PullUpGridPage1State extends State<PullUpGridPage1> {
     }
   }
 
-  /**
-   * 说明一下，这里CircularProgressIndicator有些大，简单的布局不能缩小，有的时候反而会变形，因此增加了几重
-   */
+  /// 说明一下，这里CircularProgressIndicator有些大，简单的布局不能缩小，有的时候反而会变形，因此增加了几重
   Widget _loadingView() {
     return Visibility(
       visible: isVisible,
